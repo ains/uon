@@ -1,28 +1,50 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
+    .controller('DashCtrl', function ($scope) {
+    })
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  }
-})
+    .controller('OnboardingCtrl', function ($scope, $ionicHistory, $state, Settings) {
+        $scope.settings = Settings.getSettings();
+        $scope.form = {};
+        console.log($scope.settings);
+        if ($scope.settings !== null) {
+            $scope.form.location = $scope.settings.location;
+            $scope.form.timeValue = $scope.settings.timeValue;
+        }
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
+        $scope.saveSettings = function () {
+            Settings.saveSettings({
+                'location': $scope.form.location,
+                'timeValue': $scope.form.timeValue
+            });
 
-.controller('FriendsCtrl', function($scope, Friends) {
-  $scope.friends = Friends.all();
-})
+            $ionicHistory.nextViewOptions({
+                disableBack: true
+            });
 
-.controller('FriendDetailCtrl', function($scope, $stateParams, Friends) {
-  $scope.friend = Friends.get($stateParams.friendId);
-})
+            $state.go('decision', {});
+        };
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
-});
+        $scope.clearSettings = function () {
+            Settings.clearSettings();
+            $scope.settings = null;
+        };
+    })
+
+    .controller('DecisionCtrl', function ($scope, $state, $cordovaGeolocation, $ionicPlatform, Settings) {
+        $ionicPlatform.ready(function () {
+            var posOptions = {timeout: 10000, enableHighAccuracy: true};
+            $cordovaGeolocation
+                .getCurrentPosition(posOptions)
+                .then(function (position) {
+                    var lat = position.coords.latitude;
+                    var long = position.coords.longitude;
+                    $scope.lat = lat;
+                    $scope.lon = long;
+                }, function (err) {
+                    // error
+                });
+
+        });
+        $scope.settings = Settings.getSettings();
+    });

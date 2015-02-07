@@ -99,7 +99,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-        "handlers": {
+    "handlers": {
         "console": {
             "level": "INFO",
             "class": "logging.StreamHandler",
@@ -128,3 +128,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
+TFL_APP_ID = os.environ.get('TFL_APP_ID')
+TFL_APP_KEY = os.environ.get('TFL_APP_KEY')
+UBER_CLIENT_ID = os.environ.get('UBER_CLIENT_ID')
+UBER_SERVER_TOKEN = os.environ.get('UBER_SEVER_TOKEN')
+UBER_SECRET = os.environ.get('UBER_SECRET')

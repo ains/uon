@@ -1,0 +1,28 @@
+<ion-view hide-nav-bar="true">
+    <ion-content>
+        <ion-slide-box>
+            <ion-slide>
+                <div class="box uber">
+                    <div class="row">
+                        <div class="col col-33 col-offset-67">
+                            <a ui-sref="onboarding()">
+                                <button class="button icon ion-gear-b button-clear white-icon"></button>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="decision">
+                        <h1 class="decision-uber">Uber</h1>
+
+                        <h2>{{ lat }} {{ lon }}</h2>
+                    </div>
+                </div>
+            </ion-slide>
+            <ion-slide>
+                <div class="box yellow">{{ settings.location }}</div>
+            </ion-slide>
+        </ion-slide-box>
+    </ion-content>
+</ion-view>
+
