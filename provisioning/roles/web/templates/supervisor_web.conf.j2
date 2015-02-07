@@ -1,0 +1,9 @@
+[program:web]
+command={{ python_runner }} {{ web_virtualenv }}/bin/uwsgi -s /tmp/uwsgi.sock -w {{ app_name }}.wsgi:application -H {{ web_virtualenv }} --chmod-socket=666 {{ "--py-autoreload=1 --catch-exceptions" if development else ""}}
+directory={{ src_dir }}
+autostart=true
+autorestart=true
+stdout_logfile={{ web_log_dir }}/uwsgi.log
+redirect_stderr=true
+user=web
+stopsignal=QUIT

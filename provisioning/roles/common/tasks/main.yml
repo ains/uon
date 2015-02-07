@@ -1,0 +1,23 @@
+---
+
+- name: Upgrade all APT packages
+  action: apt update_cache=yes upgrade=yes
+  when: not development
+
+- name: Make working directory
+  file: path={{ working_dir }} state=directory
+
+- name: Create python runner script
+  template: src=python_runner.sh.j2 dest={{ python_runner }}
+
+- name: Make runner script executable
+  file: path={{ python_runner }} mode=0755
+
+- name: Install core dependencies (git)
+  apt: name={{ item }} update_cache=yes state=latest
+  with_items:
+    - git
+  tags: coredeps
+
+- include: deploy.yml tags=deploy
+

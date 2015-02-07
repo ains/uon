@@ -1,0 +1,27 @@
+---
+# Apply common configuration to all hosts
+- hosts: all
+  user: root
+  vars_files:
+  - vars/secrets.yml
+  - vars/production.yml
+  roles:
+  - common
+
+# Configure and deploy message database servers.
+- hosts: dbservers
+  user: root
+  vars_files:
+    - vars/secrets.yml
+    - vars/production.yml
+  roles:
+  - db
+
+# Configure and deploy the web servers.
+- hosts: webservers
+  user: root
+  vars_files:
+    - vars/secrets.yml
+    - vars/production.yml
+  roles:
+  - web

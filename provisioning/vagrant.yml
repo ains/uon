@@ -1,0 +1,11 @@
+- hosts: all
+  user: vagrant
+  sudo: yes
+  sudo_user: root
+  roles:
+    - common
+    - db
+    - web
+  vars_files:
+    - vars/development.yml
+    - vars/dev_secrets.yml

@@ -1,0 +1,10 @@
+development: yes
+
+db_host: localhost
+db_port: 5432
+db_password: development
+
+env_vars:
+  django_secret_key: development
+  twitter_key: ""
+  twitter_secret: ""

@@ -1,0 +1,4 @@
+development: no
+
+db_host: "{{ hostvars[groups['dbservers'][0]]['ansible_' + iface].ipv4.address }}"
+db_port: 5432

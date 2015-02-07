@@ -1,0 +1,4 @@
+---
+
+- name: Copying environment variable file
+  template: src=environment.j2 dest={{ env_var_file }}

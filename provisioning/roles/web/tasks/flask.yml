@@ -1,0 +1,25 @@
+---
+
+# Install python dev
+- apt: name=python-dev update_cache=yes state=present
+
+- name: Install python-pip package
+  apt: name=python-pip update_cache=yes state=present
+
+# Install virtualenv
+- command: pip install virtualenv
+
+# Install supervisor
+- apt: name=supervisor update_cache=yes state=present
+
+- name: Start supervisor service
+  service: name=supervisor state=started
+
+# Create worker user
+- user: name=web shell=/bin/bash
+
+# Create folder for web files
+- file: path={{ web_working_dir }} owner=web group=web state=directory
+
+# Create folder for web log files
+- file: path={{ web_log_dir }} owner=web group=web state=directory

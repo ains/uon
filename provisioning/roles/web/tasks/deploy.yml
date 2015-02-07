@@ -1,0 +1,38 @@
+- name: Clone code
+  git: repo={{ git_repo }} dest={{ clone_dir }} accept_hostkey=yes
+  when: not development
+
+- name: Install requirements for task runner
+  pip: requirements={{ clone_dir }}/requirements.txt virtualenv={{ web_virtualenv }}
+  sudo_user: web
+
+- name: Copy supervisor config file
+  template: src=supervisor_web.conf.j2 dest=/etc/supervisor/conf.d/web.conf
+
+- name: Run the Django makemigrations command
+  shell: . {{ web_virtualenv }}/bin/activate
+         && . {{ env_var_file }}
+         && cd {{ web_application_path }}
+         && python manage.py makemigrations
+
+- name: Run the Django syncdb command
+  shell: . {{ web_virtualenv }}/bin/activate
+         && . {{ env_var_file }}
+         && cd {{ web_application_path }}
+         && python manage.py syncdb --noinput
+
+- name: Run Django collectstatic
+  shell: . {{ web_virtualenv }}/bin/activate
+         && . {{ env_var_file }}
+         && cd {{ web_application_path }}
+         && python manage.py collectstatic --noinput
+
+- name: Create development admin user
+  shell: . {{ web_virtualenv }}/bin/activate
+         && . {{ env_var_file }}
+         && cd {{ web_application_path }}
+         && python manage.py update_admin_user --username=admin --password=development
+  when: development
+
+- name: Start django process
+  shell: supervisorctl reload

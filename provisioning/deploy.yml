@@ -1,0 +1,12 @@
+---
+
+# Configure and deploy the web servers.
+- hosts: webservers
+  user: root
+  vars_files:
+    - vars/secrets.yml
+    - vars/production.yml
+    - roles/web/defaults/main.yml
+  tasks:
+    - include: roles/common/tasks/deploy.yml
+    - include: roles/web/tasks/deploy.yml
