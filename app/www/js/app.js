@@ -21,7 +21,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         });
     })
 
-    .value('apiRoot', 'http://127.0.0.1:8080/api/')
+    .value('apiRoot', 'https://uberornah.herokuapp.com/api/')
 
     .config(function ($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
         $ionicConfigProvider.views.maxCache(0);

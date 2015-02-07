@@ -1,1 +1,1 @@
-web: gunicorn dishboard.wsgi --chdir ./src/
+web: gunicorn uon.wsgi --chdir ./src/
