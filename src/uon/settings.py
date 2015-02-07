@@ -132,5 +132,5 @@ REST_FRAMEWORK = {
 TFL_APP_ID = os.environ.get('TFL_APP_ID')
 TFL_APP_KEY = os.environ.get('TFL_APP_KEY')
 UBER_CLIENT_ID = os.environ.get('UBER_CLIENT_ID')
-UBER_SERVER_TOKEN = os.environ.get('UBER_SEVER_TOKEN')
+UBER_SERVER_TOKEN = os.environ.get('UBER_SERVER_TOKEN')
 UBER_SECRET = os.environ.get('UBER_SECRET')

@@ -20,13 +20,26 @@
     background: #000;
 }
 
-
-.decision-uber {
+.decision-uber * {
     color: #fff;
+}
+
+.decision-uber h1, .decision-nah h1 {
     font-size: 70px;
 }
 
+.nah {
+    background: #fff;
+}
 
-.white-icon {
+.decision-nah * {
+    color: #000;
+}
+
+.uber .setting-icon {
     color : #fff !important;
+}
+
+.nah .setting-icon {
+    color : #000 !important;
 }

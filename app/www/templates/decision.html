@@ -1,26 +1,31 @@
 <ion-view hide-nav-bar="true">
     <ion-content>
-        <ion-slide-box>
+        <ion-slide-box on-slide-changed="slideChanged($index)">
             <ion-slide>
-                <div class="box uber">
+                <div class="box" ng-class="{uber: decision.uber, nah: !decision.uber}">
                     <div class="row">
                         <div class="col col-33 col-offset-67">
                             <a ui-sref="onboarding()">
-                                <button class="button icon ion-gear-b button-clear white-icon"></button>
+                                <button class="button icon ion-gear-b button-clear setting-icon"></button>
                             </a>
                         </div>
                     </div>
 
 
-                    <div class="decision">
-                        <h1 class="decision-uber">Uber</h1>
+                    <div class="decision" ng-if="decision.fetched">
+                        <div class="decision-uber" ng-cloak ng-if="decision.uber">
+                            <h1>Uber.</h1>
+                        </div>
 
-                        <h2>{{ lat }} {{ lon }}</h2>
+                        <div class="decision-nah" ng-cloak ng-if="!decision.uber">
+                            <h1>Nah,</h1>
+                            <h3>Use {{ decision.alternative_text }} instead.</h3>
+                        </div>
                     </div>
                 </div>
             </ion-slide>
             <ion-slide>
-                <div class="box yellow">{{ settings.location }}</div>
+                <div class="box yellow">{{ settings.location.geometry.location }}</div>
             </ion-slide>
         </ion-slide-box>
     </ion-content>
