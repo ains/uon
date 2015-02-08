@@ -26,7 +26,6 @@ class TFLService():
         return (
             leg['mode']['id'] == "walking"
             or leg['mode']['id'] == "bus"
-            or (leg['mode']['id'] == "tube" and leg['duration'] < 15)
         )
 
     @staticmethod

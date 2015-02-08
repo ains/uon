@@ -19,6 +19,7 @@
 
                         <div class="decision-nah" ng-cloak ng-if="!decision.uber">
                             <h1>Nah,</h1>
+
                             <h3>Use {{ decision.alternative_text }} instead.</h3>
                         </div>
                     </div>
@@ -28,8 +29,12 @@
                 <div class="box">
                     <div class="list">
                         <div class="card" ng-repeat="leg in decision.data.legs">
-                            <div class="item item-text-wrap">
+                            <div class="item item-divider">
                                 {{ leg.summary }}
+                            </div>
+
+                            <div class="item item-text-wrap">
+                                {{ leg.duration }} minutes
                             </div>
                         </div>
                     </div>

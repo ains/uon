@@ -52,6 +52,35 @@ angular.module('starter.services', [])
                 return $http.get('js/polygons/london.json').then(function (res) {
                     return res.data;
                 });
+            },
+            getOptionText: function() {
+                return "Public Transport";
+            }
+        }
+    })
+
+
+    .factory('MpkEstimator', function ($http, $q) {
+        var nextShuttleTime = moment().add(24, 'minutes');
+        return {
+            getEstimate: function (from_lat, from_lon, to_lat, to_lon) {
+                var deferred = $q.defer();
+                deferred.resolve({
+                    scoringData: {
+                        duration: nextShuttleTime.diff(moment(), 'seconds') + (60 * 60),
+                        cost: 1
+                    }
+                });
+                return deferred.promise;
+            },
+            getBoundingBox: function () {
+                return $http.get('js/polygons/mpk.json').then(function (res) {
+                    return res.data;
+                });
+            },
+            getOptionText: function() {
+                var duration = moment.duration( nextShuttleTime.diff(moment()));
+                return "the shuttle in " + duration.humanize();
             }
         }
     })
@@ -104,6 +133,9 @@ angular.module('starter.services', [])
                         };
                     });
                 }
+            },
+            getOptionText: function() {
+                return "Multihop";
             }
         }
     })
@@ -117,7 +149,7 @@ angular.module('starter.services', [])
         return {
             getDecision: function (lat, lon) {
                 var homeLocation = Settings.getSavedLocation();
-                var services = ['TflEstimator'];
+                var services = ['TflEstimator', 'MpkEstimator'];
 
                 var getEstimate = function (estimatorName) {
                     return $injector.invoke([estimatorName, function (estimator) {
@@ -191,7 +223,7 @@ angular.module('starter.services', [])
                             } else {
                                 decision = {
                                     uber: false,
-                                    alternative_text: 'Public Transport',
+                                    alternative_text: bestEstimate.estimator.getOptionText(),
                                     data: bestEstimate.estimate
                                 }
                             }

@@ -42,7 +42,7 @@ angular.module('starter.controllers', [])
             };
 
             $ionicLoading.show({
-                template: 'Doing "Algorithms"'
+                template: '<i class="icon ion-loading-c"></i>'
             });
 
             $cordovaGeolocation

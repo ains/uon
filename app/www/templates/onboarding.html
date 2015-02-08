@@ -37,6 +37,15 @@
                     <input type="range" name="timeValue" ng-model="form.timeValue" min="0" max="100">
                     <i class="icon ion-social-usd"></i>
                 </div>
+
+                <div class="row">
+                    <div class="col col-33 col-offset-33">
+                        <span ng-if="form.timeValue <= 30" class="calm">Frugal</span>
+                        <span ng-if="form.timeValue > 30 && form.timeValue <= 60" class="balanced">Sensible</span>
+                        <span ng-if="form.timeValue > 60 && form.timeValue <= 90" class="energized">Wealthy</span>
+                        <span ng-if="form.timeValue > 90 && form.timeValue <= 100" class="assertive">I Am Rich</span>
+                    </div>
+                </div>
             </div>
         </div>
 
