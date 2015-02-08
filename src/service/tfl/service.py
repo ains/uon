@@ -22,13 +22,20 @@ class TFLService():
         return requests.get(request_uri, params=params).json()
 
     @staticmethod
+    def is_uberable(leg):
+        return (
+            leg['mode']['id'] == "walking"
+            or leg['mode']['id'] == "bus"
+            or (leg['mode']['id'] == "tube" and leg['duration'] < 15)
+        )
+
+    @staticmethod
     def extract_route(resp):
         extract_leg = lambda leg: {
             'duration': leg['duration'],
             'summary': leg['instruction']['summary'],
             'mode': leg['mode']['id'],
-            'uberable': (
-                leg['mode']['id'] == "walking" or leg['mode']['id'] == "bus"),
+            'uberable': TFLService.is_uberable(leg),
             'arrival_point': {
                 'lat': leg['arrivalPoint']['lat'],
                 'lon': leg['arrivalPoint']['lon']
