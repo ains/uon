@@ -25,7 +25,15 @@
                 </div>
             </ion-slide>
             <ion-slide>
-                <div class="box yellow">{{ settings.location.geometry.location }}</div>
+                <div class="box">
+                    <div class="list">
+                        <div class="card" ng-repeat="leg in decision.data.legs">
+                            <div class="item item-text-wrap">
+                                {{ leg.summary }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </ion-slide>
         </ion-slide-box>
     </ion-content>

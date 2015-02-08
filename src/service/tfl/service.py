@@ -28,12 +28,17 @@ class TFLService():
             'summary': leg['instruction']['summary'],
             'mode': leg['mode']['id'],
             'uberable': (
-                leg['mode']['id'] == "walking" or leg['mode']['id'] == "bus")
+                leg['mode']['id'] == "walking" or leg['mode']['id'] == "bus"),
+            'arrival_point': {
+                'lat': leg['arrivalPoint']['lat'],
+                'lon': leg['arrivalPoint']['lon']
+            }
         }
         extract_journey = lambda journey: {
             'duration': journey['duration'],
             'legs': map(extract_leg,
-                        journey['legs'])
+                        journey['legs']),
+            'multi_leg': True
         }
 
         return extract_journey(resp['journeys'][0])

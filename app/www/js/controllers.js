@@ -33,7 +33,7 @@ angular.module('starter.controllers', [])
         };
     })
 
-    .controller('DecisionCtrl', function ($scope, $state, $cordovaGeolocation, $ionicPlatform, $ionicLoading, Settings, Decision) {
+    .controller('DecisionCtrl', function ($scope, $state, $cordovaGeolocation, $ionicPlatform, $ionicLoading, $ionicSlideBoxDelegate, Settings, Decision) {
         $ionicPlatform.ready(function () {
             var posOptions = {
                 maximumAge: 1,
@@ -79,6 +79,10 @@ angular.module('starter.controllers', [])
                 "&dropoff[latitude]=" + homeLocation.lat +
                 "&dropoff[longitude]=" + homeLocation.lon +
                 "&dropoff[nickname]=Home", '_blank');
+
+                $ionicSlideBoxDelegate.slide(0);
+            } else {
+
             }
         }
     });

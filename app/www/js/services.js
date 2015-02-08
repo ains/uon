@@ -68,7 +68,35 @@ angular.module('starter.services', [])
         }
     })
 
-    .factory('Decision', function ($http, $q, $injector, Settings) {
+    .factory('MultiLegEstimator', function ($q, UberEstimator) {
+        return {
+            getEstimate: function (estimator, from_lat, from_lon, to_lat, to_lon, leg_data) {
+                var lastUberableLeg = _.last(_.takeWhile(leg_data, 'uberable'));
+
+                var uber_end_lat = lastUberableLeg.arrival_point.lat;
+                var uber_end_lon = lastUberableLeg.arrival_point.lon;
+
+                var uberLeg = UberEstimator.getEstimate(from_lat, from_lon, uber_end_lat, uber_end_lon);
+                var remainderLeg = estimator.getEstimate(uber_end_lat, uber_end_lon, to_lat, to_lon);
+
+                return $q.all([uberLeg, remainderLeg]).then(function (res) {
+                    var uberData = res[0];
+                    var remainderData = res[1];
+
+                    return {
+                        uberData: uberData,
+                        remainderData: remainderData,
+                        scoringData: {
+                            duration: uberData.scoringData.duration + remainderData.scoringData.duration,
+                            cost: uberData.scoringData.cost + remainderData.scoringData.cost
+                        }
+                    };
+                });
+            }
+        }
+    })
+
+    .factory('Decision', function ($http, $q, $injector, Settings, MultiLegEstimator) {
         var calculateScore = function (userTimeValue, scoringData) {
             var priceWeight = (100 - userTimeValue) / 100;
             return 1 / (Math.pow(scoringData.cost, priceWeight) * scoringData.duration)
@@ -76,49 +104,78 @@ angular.module('starter.services', [])
 
         return {
             getDecision: function (lat, lon) {
-                var services = ['TflEstimator', 'UberEstimator'];
+                var homeLocation = Settings.getSavedLocation();
+                var services = ['TflEstimator'];
+
                 var getEstimate = function (estimatorName) {
-                    var homeLocation = Settings.getSavedLocation();
                     return $injector.invoke([estimatorName, function (estimator) {
-                        return estimator.getEstimate(lat, lon, homeLocation.lat, homeLocation.lon);
+                        return estimator
+                            .getEstimate(lat, lon, homeLocation.lat, homeLocation.lon)
+                            .then(function (estimate) {
+                                return {
+                                    estimator: estimator,
+                                    estimate: estimate
+                                }
+                            })
                     }])
                 };
 
-                var promises = _.reduce(services, function (result, serviceName) {
-                    result[serviceName] = getEstimate(serviceName);
-                    return result;
-                }, {});
+                var promises = _.map(['UberEstimator'].concat(services), getEstimate);
 
                 return $q.all(promises).then(function (res) {
                     var decision = {};
 
-                    var fastestUber = res['UberEstimator'];
-                    var tflData = res['TflEstimator'];
+                    var uberData = res.shift();
 
-                    var userTimeValue = Settings.getSettings().timeValue;
-
-                    var uberScore = calculateScore(userTimeValue, fastestUber.scoringData);
-                    var tflScore = calculateScore(userTimeValue, tflData.scoringData);
-
-                    if (uberScore >= tflScore) {
-                        decision = {
-                            uber: true
+                    var multiHopPromises = [];
+                    _.forEach(res, function (estimatorResult) {
+                        if (estimatorResult.estimate.multi_leg) {
+                            var estimate = MultiLegEstimator.getEstimate(
+                                estimatorResult.estimator, lat, lon,
+                                homeLocation.lat, homeLocation.lon, estimatorResult.estimate.legs)
+                                .then(function (estimate) {
+                                    return {
+                                        estimator: estimatorResult.estimator,
+                                        estimate: estimate
+                                    }
+                                });
+                            multiHopPromises.push(estimate);
                         }
-                    } else {
-                        decision = {
-                            uber: false,
-                            alternative_text: 'Public Transport'
-                        }
-                    }
+                    });
 
-                    decision.fetched = true;
-                    decision.debug = {
-                        fastestUber: fastestUber,
-                        tflData: tflData
-                    };
-                    console.log(Settings.getSettings());
-                    console.log(decision.debug);
-                    return decision;
+                    return $q.all(multiHopPromises).then(function (mhResults) {
+                        var estimates = res.concat(mhResults);
+                        var userTimeValue = Settings.getSettings().timeValue;
+
+                        var bestEstimate = _.max(estimates, function (estimatorResult) {
+                            return calculateScore(userTimeValue, estimatorResult.estimate.scoringData);
+                        });
+
+                        var uberScore = calculateScore(userTimeValue, uberData.estimate.scoringData);
+                        var estimateScore = calculateScore(userTimeValue, bestEstimate.estimate.scoringData);
+
+                        if (uberScore >= estimateScore) {
+                            decision = {
+                                uber: true
+                            }
+                        } else {
+                            decision = {
+                                uber: false,
+                                alternative_text: 'Public Transport',
+                                data: bestEstimate.estimate
+                            }
+                        }
+
+                        decision.fetched = true;
+                        decision.debug = {
+                            estimates: estimates,
+                            bestEstimate: bestEstimate
+                        };
+                        console.log(decision.debug);
+                        return decision;
+                    });
+
+
                 });
             }
         }
