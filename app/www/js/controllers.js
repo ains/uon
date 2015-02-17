@@ -8,9 +8,8 @@ angular.module('starter.controllers', [])
         $scope.form = {
             timeValue: 50
         };
-        console.log($scope.settings);
         if ($scope.settings !== null) {
-            $scope.form.location = $scope.settings.location;
+            $scope.form.location = $scope.settings.location['formatted_address'];
             $scope.form.timeValue = $scope.settings.timeValue;
         }
 

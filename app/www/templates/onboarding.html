@@ -19,7 +19,7 @@
 
             <div class="item item-text-wrap">
                 <label class="item item-input item-stacked-label">
-                    <ion-google-place placeholder="Enter an address, Apt# and ZIP" ng-model="form.location"/>
+                    <ion-google-place placeholder="{{ form.location || 'Enter an address, place or ZIP code' }}" ng-model="form.location"/>
                 </label>
             </div>
         </div>
