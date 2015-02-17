@@ -36,6 +36,7 @@ angular.module('starter.services', [])
         }
     })
 
+    // Disabled for now
     .factory('TflEstimator', function ($http, Estimator) {
         return {
             getEstimate: function (from_lat, from_lon, to_lat, to_lon) {
@@ -50,6 +51,30 @@ angular.module('starter.services', [])
             },
             getBoundingBox: function () {
                 return $http.get('js/polygons/london.json').then(function (res) {
+                    return res.data;
+                });
+            },
+            getOptionText: function() {
+                return "Public Transport";
+            }
+        }
+    })
+
+
+    .factory('GoogleEstimator', function ($http, Estimator) {
+        return {
+            getEstimate: function (from_lat, from_lon, to_lat, to_lon) {
+                return Estimator.getEstimate('google', from_lat, from_lon, to_lat, to_lon).then(function (res) {
+                    var data = res.data;
+                    data.scoringData = {
+                        duration: data.duration,
+                        cost: 5
+                    };
+                    return data;
+                });
+            },
+            getBoundingBox: function () {
+                return $http.get('js/polygons/world.json').then(function (res) {
                     return res.data;
                 });
             },
@@ -149,7 +174,7 @@ angular.module('starter.services', [])
         return {
             getDecision: function (lat, lon) {
                 var homeLocation = Settings.getSavedLocation();
-                var services = ['TflEstimator', 'MpkEstimator'];
+                var services = ['MpkEstimator', 'GoogleEstimator'];
 
                 var getEstimate = function (estimatorName) {
                     return $injector.invoke([estimatorName, function (estimator) {

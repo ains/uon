@@ -34,7 +34,7 @@
                             </div>
 
                             <div class="item item-text-wrap">
-                                {{ leg.duration }} minutes
+                                {{ leg.duration | amDurationFormat:'seconds':false }}
                             </div>
                         </div>
                     </div>
